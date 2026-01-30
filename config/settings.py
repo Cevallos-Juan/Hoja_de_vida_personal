@@ -79,7 +79,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3'
+        default='postgresql://db_hojadevida_4haa_user:O3UTjBYwoOyC0cWpdkv2GhUPKaHwY4SV@dpg-d5ufj5koud1c73bqter0-a.virginia-postgres.render.com/db_hojadevida_4haa',
+        conn_max_age=600,
+        ssl_require=True  # recomendable en Render
     )
 }
 
