@@ -13,7 +13,6 @@ venv/
 # Django
 *.log
 media/
-staticfiles/
 
 # Variables de entorno
 .env
