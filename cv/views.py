@@ -1,24 +1,33 @@
 from django.shortcuts import render
-from .models import Perfil, Educacion, Experiencia, Habilidad, Referencia
+from .models import Perfil, Educacion, Experiencia, Habilidad, Referencia, Certificado, Proyecto
 
-def cv_view (request):
-    perfil = Perfil.objects.first ()
-    educaciones = Educacion.objects.all ()
-    experiencias = Experiencia.objects.all ()
-    habilidades = Habilidad.objects.all ()
+def cv_view(request):
+    perfil = Perfil.objects.first()
+
+    educaciones = Educacion.objects.all()
+    experiencias = Experiencia.objects.all()
+    habilidades = Habilidad.objects.all()
     referencias = Referencia.objects.all()
+
+    certificados = []
+    proyectos = []
+
+    if perfil:
+        certificados = perfil.certificados.all()
+        proyectos = perfil.proyectos.all()
 
     context = {
         'perfil': perfil,
-        'educaciones': educaciones.all (),
-        'experiencias': experiencias.all (),
-        'habilidades': habilidades.all (),
-        'certificados': perfil.certificados.all (),
-        'proyectos': perfil.proyectos.all (),
-        'referencias': referencias.all(), 
+        'educaciones': educaciones,
+        'experiencias': experiencias,
+        'habilidades': habilidades,
+        'certificados': certificados,
+        'proyectos': proyectos,
+        'referencias': referencias,
     }
 
-    return render (request, 'cv/cv.html', context)
+    return render(request, 'cv/cv.html', context)
+
 
 def home(request):
     perfil = Perfil.objects.first()
