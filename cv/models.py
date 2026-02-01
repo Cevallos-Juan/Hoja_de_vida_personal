@@ -9,7 +9,7 @@ class Perfil (models.Model):
     ubicacion = models.CharField (max_length = 100)
     linkedin = models.URLField (blank = True)
     github = models.URLField (blank = True)
-    foto = models.ImageField (upload_to = 'perfil/', blank = True, null = True)
+    foto = models.ImageField (upload_to = 'perfil/', null = True,  blank = True)
 
     def __str__(self):
         return self.nombre
@@ -79,3 +79,13 @@ class Referencia(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.empresa}"
+    
+class Garaje(models.Model):
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='garaje')
+    nombre = models.CharField(max_length=200)
+    descripcion = models.TextField()
+    imagen = models.ImageField(upload_to='garaje/')
+    enlace = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
