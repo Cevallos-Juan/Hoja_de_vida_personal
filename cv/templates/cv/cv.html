@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -239,6 +240,8 @@
             }
 
             nav,
+            .btn,
+            .modal,
             .dark-toggle,
             .btn {
                 display: none !important;
@@ -466,7 +469,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#experiencia"> Experiencia Laboral </a>
+                        <a class="nav-link" href="#experiencia"> Experiencia </a>
                     </li>
 
                     <li class="nav-item">
@@ -483,6 +486,14 @@
                     
                     <li class="nav-item">
                         <a class="nav-link" href="#referencias"> Referencias </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reconocimientos"> Reconocimientos </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#garaje"> Garaje </a>
                     </li>
 
                     <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#pdfOptionsModal">
@@ -656,6 +667,125 @@
             </div>
         </section>
 
+        <!-- RECONOCIMIENTOS -->
+        <section id="reconocimientos" class="mb-4 reveal">
+        <div class="card shadow p-4">
+            <h3 class="section-title"> 📜 Reconocimientos </h3>
+
+            <div class="row g-4">
+            {% for rec in reconocimientos %}
+            <div class="col-md-4 col-sm-6">
+                <div class="card cert-card"
+                    data-bs-toggle="modal"
+                    data-bs-target="#reconocimientoModal"
+                    onclick="openReconocimientoModal(
+                    '{{ rec.titulo }}',
+                    '{{ rec.imagen.url }}',
+                    '{{ rec.archivo.url }}'
+                    )">
+
+                <img src="{{ rec.imagen.url }}" class="img-fluid" loading="lazy">
+
+                <div class="card-body text-center">
+                    <p class="cert-title mb-0">{{ rec.titulo }}</p>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+        </section>
+
+        <div class="modal fade" id="reconocimientoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="recTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <img id="recImage" class="img-fluid mb-3 rounded" />
+
+                <div class="d-flex justify-content-center gap-3">
+                <a id="btnImg" class="btn btn-outline-primary" download>
+                    ⬇️ Descargar imagen
+                </a>
+
+                <a id="btnPdf" class="btn btn-outline-danger" download>
+                    📄 Descargar PDF
+                </a>
+                </div>
+            </div>
+
+            </div>
+        </div>
+        </div>
+
+
+        <!-- GARAJE -->
+        <section id="garaje" class="mb-4 reveal">
+        <div class="card shadow p-4">
+            <h3 class="section-title"> 🛒 Garaje </h3>
+
+            <div class="row g-4">
+            {% for item in garajes %}
+            <div class="col-md-4 col-sm-6">
+                <div class="card cert-card"
+                    data-bs-toggle="modal"
+                    data-bs-target="#garajeModal"
+                    onclick="openGarajeModal(
+                    '{{ item.nombre }}',
+                    '{{ item.imagen.url }}',
+                    '{{ item.precio }}',
+                    '{{ item.descripcion|escapejs }}'
+                    )">
+
+                <img src="{{ item.imagen.url }}" loading="lazy" alt="{{ item.nombre }}">
+
+                <div class="card-body text-center">
+                    <p class="cert-title mb-0">{{ item.nombre }}</p>
+                    {% if item.precio %}
+                    <small class="text-muted">$ {{ item.precio }}</small>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+        </section>
+
+        <div class="modal fade" id="garajeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="garajeTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+
+                <img id="garajeImg" class="img-fluid rounded mb-3">
+
+                <p id="garajeDesc" class="text-muted"></p>
+
+                <h5 id="garajePrecio" class="fw-bold text-success mb-3"></h5>
+
+                <button class="btn btn-primary">
+                🛒 Agregar a comprar
+                </button>
+
+            </div>
+
+            </div>
+        </div>
+        </div>
+
+
+
         <!-- REFERENCIAS -->
         <section id="referencias" class="mb-4 reveal">
             <div class="card shadow p-4">
@@ -773,43 +903,82 @@
     </script>
 
     <script>
-        function generatePDF() {
-            const wasDark = document.body.classList.contains("dark-mode");
-            if (wasDark) document.body.classList.remove("dark-mode");
+    function generatePDF() {
 
-            // Obtener todas las secciones que el usuario quiere incluir
-            const checkboxes = document.querySelectorAll(".pdf-option");
-            const toHide = [];
+        // Guardar estado oscuro
+        const wasDark = document.body.classList.contains("dark-mode");
 
-            checkboxes.forEach(cb => {
-                const selector = cb.value;
-                const element = document.querySelector(selector);
-
-                if (!cb.checked && element) {
-                    element.dataset.hiddenByPdf = "true";
-                    element.style.display = "none";
-                    toHide.push(element);
-                }
-            });
-
-            // Cerrar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('pdfOptionsModal'));
-            modal.hide();
-
-            // Descargar PDF
-            setTimeout(() => {
-                window.print();
-
-                // Restaurar secciones ocultas
-                toHide.forEach(el => {
-                    el.style.display = "";
-                    delete el.dataset.hiddenByPdf;
-                });
-
-                if (wasDark) document.body.classList.add("dark-mode");
-            }, 200);
+        // Forzar modo claro
+        if (wasDark) {
+            document.body.classList.remove("dark-mode");
         }
+
+        // Ocultar secciones no seleccionadas
+        const checkboxes = document.querySelectorAll(".pdf-option");
+        const hiddenSections = [];
+
+        checkboxes.forEach(cb => {
+            const section = document.querySelector(cb.value);
+            if (section && !cb.checked) {
+                hiddenSections.push(section);
+                section.style.display = "none";
+            }
+        });
+
+        // Cerrar modal
+        const modalEl = document.getElementById("pdfOptionsModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+
+        // Esperar y generar PDF
+        setTimeout(() => {
+            window.print();
+
+            // Restaurar secciones
+            hiddenSections.forEach(sec => sec.style.display = "");
+
+            // Restaurar modo oscuro
+            if (wasDark) {
+                document.body.classList.add("dark-mode");
+            }
+        }, 300);
+    }
     </script>
+
+
+    <script>
+    function openReconocimientoModal(titulo, imgUrl, pdfUrl) {
+        document.getElementById('recTitle').innerText = titulo;
+
+        const img = document.getElementById('recImage');
+        img.src = imgUrl;
+
+        const btnImg = document.getElementById('btnImg');
+        btnImg.href = imgUrl;
+
+        const btnPdf = document.getElementById('btnPdf');
+        btnPdf.href = pdfUrl;
+    }
+    </script>
+
+
+    <script>
+    function openGarajeModal(nombre, img, precio, descripcion) {
+
+        document.getElementById("garajeTitle").innerText = nombre;
+        document.getElementById("garajeImg").src = img;
+        document.getElementById("garajeDesc").innerText = descripcion || "";
+
+        const precioEl = document.getElementById("garajePrecio");
+        if (precio) {
+            precioEl.innerText = "$ " + precio;
+            precioEl.style.display = "block";
+        } else {
+            precioEl.style.display = "none";
+        }
+    }
+    </script>
+
 
     <!-- MODAL PARA SELECCIONAR SECCIONES -->
     <div class="modal fade" id="pdfOptionsModal" tabindex="-1">
@@ -822,48 +991,75 @@
                 </div>
 
                 <div class="modal-body">
-                    <p class="mb-2">Elige qué secciones deseas incluir en tu PDF:</p>
+                    <p class="text-muted mb-3">
+                        Selecciona qué secciones deseas incluir en tu hoja de vida en PDF:
+                    </p>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#perfil" checked>
-                        <label class="form-check-label">Perfil</label>
-                    </div>
+                    <div class="row">
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#educacion" checked>
-                        <label class="form-check-label">Educación</label>
-                    </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#perfil" checked>
+                                <label class="form-check-label fw-semibold">👤 Perfil</label>
+                            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#experiencia" checked>
-                        <label class="form-check-label">Experiencia Laboral</label>
-                    </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#educacion" checked>
+                                <label class="form-check-label fw-semibold">🎓 Educación</label>
+                            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#habilidades" checked>
-                        <label class="form-check-label">Habilidades</label>
-                    </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#experiencia" checked>
+                                <label class="form-check-label fw-semibold">💼 Experiencia</label>
+                            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#certificados" checked>
-                        <label class="form-check-label">Certificados</label>
-                    </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#habilidades" checked>
+                                <label class="form-check-label fw-semibold">🧠 Habilidades</label>
+                            </div>
+                        </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#proyectos" checked>
-                        <label class="form-check-label">Proyectos</label>
-                    </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#certificados" checked>
+                                <label class="form-check-label fw-semibold">📜 Certificados</label>
+                            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input pdf-option" type="checkbox" value="#referencias" checked>
-                        <label class="form-check-label">Referencias</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#proyectos" checked>
+                                <label class="form-check-label fw-semibold">🚀 Proyectos</label>
+                            </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#reconocimientos" checked>
+                                <label class="form-check-label fw-semibold">🏅 Reconocimientos</label>
+                            </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#garaje" checked>
+                                <label class="form-check-label fw-semibold">🛒 Garaje</label>
+                            </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input pdf-option" type="checkbox" value="#referencias" checked>
+                                <label class="form-check-label fw-semibold">📋 Referencias</label>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-primary" onclick="generatePDF()">Generar PDF</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        ❌ Cancelar
+                    </button>
+
+                    <button class="btn btn-success px-4" onclick="generatePDF()">
+                        📄 Guardar CV en PDF
+                    </button>
                 </div>
+
 
             </div>
         </div>

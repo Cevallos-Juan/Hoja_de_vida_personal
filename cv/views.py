@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Perfil, Educacion, Experiencia, Habilidad, Referencia, Certificado, Proyecto
+from .models import Perfil, Educacion, Experiencia, Habilidad, Reconocimiento, Referencia, Certificado, Proyecto, Reconocimiento, Garaje
 
 def cv_view(request):
     perfil = Perfil.objects.first()
@@ -8,6 +8,8 @@ def cv_view(request):
     experiencias = Experiencia.objects.all()
     habilidades = Habilidad.objects.all()
     referencias = Referencia.objects.all()
+    reconocimientos = Reconocimiento.objects.all()
+    garajes = Garaje.objects.all()
 
     certificados = []
     proyectos = []
@@ -16,6 +18,13 @@ def cv_view(request):
         certificados = perfil.certificados.all()
         proyectos = perfil.proyectos.all()
 
+     # 🔥 AQUÍ ESTÁ LA CLAVE
+    for r in reconocimientos:
+        if r.archivo:
+            r.es_pdf = r.archivo.url.lower().endswith('.pdf')
+        else:
+            r.es_pdf = False
+
     context = {
         'perfil': perfil,
         'educaciones': educaciones,
@@ -23,6 +32,8 @@ def cv_view(request):
         'habilidades': habilidades,
         'certificados': certificados,
         'proyectos': proyectos,
+        'reconocimientos': reconocimientos,
+        'garajes': garajes,
         'referencias': referencias,
     }
 
@@ -32,3 +43,4 @@ def cv_view(request):
 def home(request):
     perfil = Perfil.objects.first()
     return render(request, 'cv/home.html', {'perfil': perfil})
+

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #111;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            font-size: 14px;
+            margin-top: 18px;
+            border-bottom: 1px solid #999;
+        }
+
+        .sub {
+            font-size: 11px;
+            color: #555;
+        }
+
+        .item {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% if perfil %}
+    <h1>{{ perfil.nombre }}</h1>
+    <p class="sub">{{ perfil.profesion }}</p>
+    <p class="sub">
+        {{ perfil.email }} |
+        {{ perfil.telefono }} |
+        {{ perfil.ciudad }}
+    </p>
+    {% endif %}
+
+    {% if educaciones %}
+    <h2>Educación</h2>
+    {% for e in educaciones %}
+        <div class="item">
+            <strong>{{ e.titulo }}</strong><br>
+            {{ e.institucion }} — {{ e.fecha_inicio }} - {{ e.fecha_fin }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if experiencias %}
+    <h2>Experiencia</h2>
+    {% for ex in experiencias %}
+        <div class="item">
+            <strong>{{ ex.cargo }}</strong><br>
+            {{ ex.empresa }} — {{ ex.fecha_inicio }} - {{ ex.fecha_fin }}<br>
+            {{ ex.descripcion }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if habilidades %}
+    <h2>Habilidades</h2>
+    <ul>
+        {% for h in habilidades %}
+            <li>{{ h.nombre }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if certificados %}
+    <h2>Certificados</h2>
+    <ul>
+        {% for c in certificados %}
+            <li>{{ c.nombre }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if proyectos %}
+    <h2>Proyectos</h2>
+    {% for p in proyectos %}
+        <div class="item">
+            <strong>{{ p.nombre }}</strong><br>
+            {{ p.descripcion }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if reconocimientos %}
+    <h2>Reconocimientos</h2>
+    <ul>
+        {% for r in reconocimientos %}
+            <li>{{ r.titulo }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if garajes %}
+    <h2>Garaje</h2>
+    {% for g in garajes %}
+        <div class="item">
+            <strong>{{ g.nombre }}</strong><br>
+            {{ g.descripcion }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if referencias %}
+    <h2>Referencias</h2>
+    {% for ref in referencias %}
+        <div class="item">
+            <strong>{{ ref.nombre }}</strong> — {{ ref.cargo }}<br>
+            {{ ref.telefono }} | {{ ref.email }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+</body>
+</html>

@@ -79,13 +79,18 @@ class Referencia(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.empresa}"
+
+class Reconocimiento(models.Model):
+    titulo = models.CharField(max_length=200)
+    archivo = models.FileField(upload_to='reconocimientos/')
+    imagen = models.ImageField(upload_to="reconocimientos/")
+    fecha = models.DateField(null=True, blank=True)
     
 class Garaje(models.Model):
-    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='garaje')
     nombre = models.CharField(max_length=200)
-    descripcion = models.TextField()
     imagen = models.ImageField(upload_to='garaje/')
-    enlace = models.URLField(blank=True, null=True)
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return self.nombre
